@@ -59,21 +59,16 @@ public class LocationPermission: Permission {
         }
     }
     
+    private var authorizationStatus: CLAuthorizationStatus {
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            return CLLocationManager().authorizationStatus
+        } else {
+            return CLLocationManager.authorizationStatus()
+        }
+    }
+    
+    
     public override var status: Permission.Status {
-        // Using a weak reference to self
-        private lazy var locationManager: CLLocationManager = {
-            [weak self] in
-            return CLLocationManager()
-        }()
-        
-        let authorizationStatus: CLAuthorizationStatus = {
-            if #available(iOS 14.0, tvOS 14.0, *) {
-                return locationManager.authorizationStatus
-            } else {
-                return CLLocationManager.authorizationStatus()
-            }
-        }()
-        
         switch authorizationStatus {
         #if os(iOS)
         case .authorized: return .authorized
